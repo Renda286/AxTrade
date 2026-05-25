@@ -16,6 +16,12 @@ public class TradeTicker {
         Scheduler.get().runTimer(scheduledTask -> {
             for (Trade trade : Trades.getTrades()) {
                 if (trade.isEnded()) continue;
+
+                // refresh title every second so the %countdown% placeholder updates live
+                // (updateTitle() has a built-in equality check, no packet spam)
+                if (trade.getPlayer1().getTradeGui() != null) trade.getPlayer1().getTradeGui().updateTitle();
+                if (trade.getPlayer2().getTradeGui() != null) trade.getPlayer2().getTradeGui().updateTitle();
+
                 if (!(trade.player1.hasConfirmed() && trade.player2.hasConfirmed())) continue;
 
                 if (trade.player1.getConfirmed() == 1) {
