@@ -352,10 +352,20 @@ public class TradeGui extends GuiFrame {
     }
 
     public void updateTitle() {
+        // compute countdown - only active once both players confirmed
+        int countdown = -1;
+        if (player.hasConfirmed() && player.getOtherPlayer().hasConfirmed()) {
+            countdown = Math.max(player.getConfirmed(), player.getOtherPlayer().getConfirmed());
+        }
+        String countdownStr = countdown >= 0
+                ? String.valueOf(countdown)
+                : LANG.getString("placeholders.idle", "-");
+
         String newTitle = GUIS.getString("title")
                 .replace("%player%", player.getOtherPlayer().getPlayer().getName())
                 .replace("%own-status%", player.hasConfirmed() ? LANG.getString("placeholders.ready") : LANG.getString("placeholders.waiting"))
-                .replace("%partner-status%", player.getOtherPlayer().hasConfirmed() ? LANG.getString("placeholders.ready") : LANG.getString("placeholders.waiting"));
+                .replace("%partner-status%", player.getOtherPlayer().hasConfirmed() ? LANG.getString("placeholders.ready") : LANG.getString("placeholders.waiting"))
+                .replace("%countdown%", countdownStr);
 
         // don't update title if it didn't change
         if (currentTitle.equals(newTitle)) return;
